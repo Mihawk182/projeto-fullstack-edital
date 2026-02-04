@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.auth;
+package com.edital.fullstack.auth;
 
 import com.edital.fullstack.security.JwtService;
 import java.time.Instant;

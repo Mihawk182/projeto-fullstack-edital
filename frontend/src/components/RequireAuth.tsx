@@ -1,4 +1,4 @@
-﻿import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useObservable } from "../hooks/useObservable";
 import { authFacade } from "../facades/authFacade";
 

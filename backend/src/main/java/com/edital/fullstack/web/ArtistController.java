@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.web;
+package com.edital.fullstack.web;
 
 import com.edital.fullstack.domain.service.ArtistService;
 import com.edital.fullstack.web.dto.ArtistCreateRequest;

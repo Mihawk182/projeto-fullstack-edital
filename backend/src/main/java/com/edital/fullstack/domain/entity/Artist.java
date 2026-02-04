@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.domain.entity;
+package com.edital.fullstack.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

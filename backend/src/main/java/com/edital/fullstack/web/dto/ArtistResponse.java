@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.web.dto;
+package com.edital.fullstack.web.dto;
 
 import java.util.UUID;
 

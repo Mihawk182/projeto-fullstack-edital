@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.auth;
+package com.edital.fullstack.auth;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

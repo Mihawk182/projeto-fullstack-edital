@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.web.mapper;
+package com.edital.fullstack.web.mapper;
 
 import com.edital.fullstack.domain.entity.Album;
 import com.edital.fullstack.web.dto.AlbumResponse;

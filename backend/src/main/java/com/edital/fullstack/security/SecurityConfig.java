@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.security;
+package com.edital.fullstack.security;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;

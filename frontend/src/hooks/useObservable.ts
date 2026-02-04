@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Observable } from "rxjs";
 
 export function useObservable<T>(observable: Observable<T>, initial?: T) {

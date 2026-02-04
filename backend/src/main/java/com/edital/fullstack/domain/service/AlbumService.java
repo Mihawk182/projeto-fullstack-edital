@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.domain.service;
+package com.edital.fullstack.domain.service;
 
 import com.edital.fullstack.domain.entity.Album;
 import com.edital.fullstack.domain.repository.AlbumRepository;

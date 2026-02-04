@@ -1,4 +1,4 @@
-﻿import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { Artist, mockArtists } from "../services/models";
 
 export type ArtistFilters = {

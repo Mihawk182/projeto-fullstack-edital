@@ -1,4 +1,4 @@
-﻿export type Artist = {
+export type Artist = {
   id: string;
   name: string;
   albumsCount: number;

@@ -1,4 +1,4 @@
-﻿import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
 import LoginPage from "../pages/LoginPage";
 import ArtistListPage from "../pages/ArtistListPage";

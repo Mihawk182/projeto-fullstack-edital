@@ -1,4 +1,4 @@
-﻿export type ArtistPayload = { name: string };
+export type ArtistPayload = { name: string };
 
 export async function fetchArtists() {
   return [];

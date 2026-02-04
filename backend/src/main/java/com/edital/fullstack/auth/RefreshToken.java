@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.auth;
+package com.edital.fullstack.auth;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

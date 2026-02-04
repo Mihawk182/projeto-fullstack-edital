@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.security;
+package com.edital.fullstack.security;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

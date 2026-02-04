@@ -1,4 +1,4 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useObservable } from "../hooks/useObservable";
 import { artistFacade } from "../facades/artistFacade";
 

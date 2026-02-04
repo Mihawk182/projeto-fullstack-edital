@@ -1,4 +1,4 @@
-﻿export class WebSocketService {
+export class WebSocketService {
   private socket?: WebSocket;
 
   connect(url: string) {

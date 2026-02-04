@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.auth;
+package com.edital.fullstack.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
