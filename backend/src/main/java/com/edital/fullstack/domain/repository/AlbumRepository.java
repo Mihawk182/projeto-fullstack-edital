@@ -1,4 +1,4 @@
-package com.edital.fullstack.domain.repository;
+﻿package com.edital.fullstack.domain.repository;
 
 import com.edital.fullstack.domain.entity.Album;
 import java.util.UUID;
@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AlbumRepository extends JpaRepository<Album, UUID> {
   Page<Album> findByArtistId(UUID artistId, Pageable pageable);
+
+  long countByArtistId(UUID artistId);
 }

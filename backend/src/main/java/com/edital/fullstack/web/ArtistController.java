@@ -1,4 +1,4 @@
-package com.edital.fullstack.web;
+﻿package com.edital.fullstack.web;
 
 import com.edital.fullstack.domain.service.ArtistService;
 import com.edital.fullstack.web.dto.ArtistCreateRequest;
@@ -33,21 +33,23 @@ public class ArtistController {
     @RequestParam(required = false) String search,
     @PageableDefault(size = 10) Pageable pageable
   ) {
-    return service.list(search, pageable).map(ArtistMapper::toResponse);
+    return service.listWithCounts(search, pageable);
   }
 
   @GetMapping("/{id}")
   public ArtistResponse get(@PathVariable UUID id) {
-    return ArtistMapper.toResponse(service.get(id));
+    return service.getWithCount(id);
   }
 
   @PostMapping
   public ArtistResponse create(@Valid @RequestBody ArtistCreateRequest request) {
-    return ArtistMapper.toResponse(service.create(request.name()));
+    var artist = service.create(request.name());
+    return ArtistMapper.toResponse(artist, 0);
   }
 
   @PutMapping("/{id}")
   public ArtistResponse update(@PathVariable UUID id, @Valid @RequestBody ArtistUpdateRequest request) {
-    return ArtistMapper.toResponse(service.update(id, request.name()));
+    var artist = service.update(id, request.name());
+    return ArtistMapper.toResponse(artist, service.countAlbums(id));
   }
 }
