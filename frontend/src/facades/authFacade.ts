@@ -1,5 +1,5 @@
 import { BehaviorSubject } from "rxjs";
-import { login, Credentials, AuthResponse } from "../services/authService";
+import { login, refresh, Credentials, AuthResponse } from "../services/authService";
 
 export type AuthState = {
   isAuthenticated: boolean;
@@ -41,6 +41,15 @@ function persistState(state: AuthState) {
 class AuthFacade {
   private authSubject = new BehaviorSubject<AuthState>(loadState());
   auth$ = this.authSubject.asObservable();
+  private refreshPromise?: Promise<AuthResponse>;
+
+  getState() {
+    return this.authSubject.value;
+  }
+
+  getAccessToken() {
+    return this.authSubject.value.accessToken;
+  }
 
   login(token: string) {
     const state: AuthState = { isAuthenticated: true, accessToken: token };
@@ -61,6 +70,44 @@ class AuthFacade {
       persistState(state);
       return response;
     });
+  }
+
+  refreshIfNeeded(): Promise<AuthResponse | null> {
+    const state = this.authSubject.value;
+    if (!state.refreshToken || !state.expiresAt) {
+      return Promise.resolve(null);
+    }
+
+    const now = Date.now();
+    const bufferMs = 30_000;
+    if (state.expiresAt - now > bufferMs) {
+      return Promise.resolve(null);
+    }
+
+    if (!this.refreshPromise) {
+      this.refreshPromise = refresh(state.refreshToken)
+        .then((response) => {
+          const expiresAt = Date.now() + response.expiresIn * 1000;
+          const nextState: AuthState = {
+            isAuthenticated: true,
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+            expiresAt
+          };
+          this.authSubject.next(nextState);
+          persistState(nextState);
+          return response;
+        })
+        .catch((error) => {
+          this.logout();
+          throw error;
+        })
+        .finally(() => {
+          this.refreshPromise = undefined;
+        });
+    }
+
+    return this.refreshPromise;
   }
 
   logout() {
