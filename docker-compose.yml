@@ -48,7 +48,8 @@
     depends_on:
       postgres:
         condition: service_healthy
-      - minio
+      minio:
+        condition: service_started
 
   frontend:
     build:
