@@ -8,7 +8,9 @@ import com.edital.fullstack.web.mapper.ArtistMapper;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +35,11 @@ public class ArtistController {
     @RequestParam(required = false) String search,
     @PageableDefault(size = 10) Pageable pageable
   ) {
-    return service.listWithCounts(search, pageable);
+    Sort sort = pageable.getSort().isSorted()
+        ? Sort.by(pageable.getSort().stream().findFirst().map(Sort.Order::getDirection).orElse(Sort.Direction.ASC), "name")
+        : Sort.by("name").ascending();
+    Pageable sorted = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    return service.listWithCounts(search, sorted);
   }
 
   @GetMapping("/{id}")

@@ -31,3 +31,23 @@ export async function fetchArtists(query: ArtistQuery) {
 
   return apiFetch<PageResponse<ArtistDto>>(`/artists?${params.toString()}`);
 }
+
+export async function fetchArtist(id: string) {
+  return apiFetch<ArtistDto>(`/artists/${id}`);
+}
+
+export async function createArtist(name: string) {
+  return apiFetch<ArtistDto>(`/artists`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name })
+  });
+}
+
+export async function updateArtist(id: string, name: string) {
+  return apiFetch<ArtistDto>(`/artists/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name })
+  });
+}
