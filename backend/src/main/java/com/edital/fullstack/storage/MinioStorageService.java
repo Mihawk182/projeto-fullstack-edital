@@ -17,15 +17,21 @@ public class MinioStorageService {
   private final MinioClient client;
   private final String bucket;
   private final String publicEndpoint;
+  private final String accessKey;
+  private final String secretKey;
 
   public MinioStorageService(
       MinioClient client,
       @Value("${minio.bucket}") String bucket,
-      @Value("${minio.public-endpoint}") String publicEndpoint
+      @Value("${minio.public-endpoint}") String publicEndpoint,
+      @Value("${minio.access-key}") String accessKey,
+      @Value("${minio.secret-key}") String secretKey
   ) {
     this.client = client;
     this.bucket = bucket;
     this.publicEndpoint = publicEndpoint;
+    this.accessKey = accessKey;
+    this.secretKey = secretKey;
   }
 
   public String upload(String filename, InputStream inputStream, long size, String contentType) throws Exception {
@@ -44,7 +50,14 @@ public class MinioStorageService {
 
   public String presignedUrl(String objectKey, Duration expiry) throws Exception {
     ensureBucket();
-    String internalUrl = client.getPresignedObjectUrl(
+    MinioClient presignClient = client;
+    if (publicEndpoint != null && !publicEndpoint.isBlank()) {
+      presignClient = MinioClient.builder()
+          .endpoint(publicEndpoint)
+          .credentials(accessKey, secretKey)
+          .build();
+    }
+    return presignClient.getPresignedObjectUrl(
         GetPresignedObjectUrlArgs.builder()
             .bucket(bucket)
             .object(objectKey)
@@ -52,10 +65,6 @@ public class MinioStorageService {
             .expiry((int) expiry.toSeconds())
             .build()
     );
-    if (publicEndpoint == null || publicEndpoint.isBlank()) {
-      return internalUrl;
-    }
-    return internalUrl.replaceFirst("https?://[^/]+", publicEndpoint);
   }
 
   private void ensureBucket() throws Exception {
