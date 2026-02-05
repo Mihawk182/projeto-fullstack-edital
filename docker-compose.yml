@@ -41,8 +41,10 @@
       DB_USER: app_user
       DB_PASSWORD: app_password
       MINIO_ENDPOINT: http://minio:9000
+      MINIO_PUBLIC_ENDPOINT: http://localhost:9000
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
+      MINIO_BUCKET: album-covers
     ports:
       - "8080:8080"
     depends_on:
