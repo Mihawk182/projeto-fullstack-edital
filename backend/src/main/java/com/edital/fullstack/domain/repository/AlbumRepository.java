@@ -1,4 +1,4 @@
-﻿package com.edital.fullstack.domain.repository;
+package com.edital.fullstack.domain.repository;
 
 import com.edital.fullstack.domain.entity.Album;
 import java.util.UUID;

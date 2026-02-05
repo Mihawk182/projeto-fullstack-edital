@@ -3,7 +3,7 @@ import { useObservable } from "../hooks/useObservable";
 import { authFacade } from "../facades/authFacade";
 
 export default function RequireAuth() {
-  const auth = useObservable(authFacade.auth$);
+  const auth = useObservable(authFacade.auth$, authFacade.getState());
 
   if (!auth.isAuthenticated) {
     return <Navigate to="/login" replace />;
