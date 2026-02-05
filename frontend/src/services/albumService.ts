@@ -40,3 +40,17 @@ export async function updateAlbum(id: string, title: string) {
     body: JSON.stringify({ title })
   });
 }
+
+export async function uploadCover(albumId: string, file: File) {
+  const form = new FormData();
+  form.append("file", file);
+
+  return apiFetch<{ coverObjectKey: string; coverUrl: string }>(`/albums/${albumId}/cover`, {
+    method: "POST",
+    body: form
+  });
+}
+
+export async function getCover(albumId: string) {
+  return apiFetch<{ coverUrl: string }>(`/albums/${albumId}/cover`);
+}

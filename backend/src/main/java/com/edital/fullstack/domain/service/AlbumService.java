@@ -26,6 +26,10 @@ public class AlbumService {
     return repository.findByArtistId(artistId, pageable);
   }
 
+  public Album get(UUID id) {
+    return repository.findById(id).orElseThrow();
+  }
+
   public Album create(UUID artistId, String title) {
     var artist = artistRepository.findById(artistId).orElseThrow();
     var now = Instant.now();
@@ -34,8 +38,15 @@ public class AlbumService {
   }
 
   public Album update(UUID id, String title) {
-    var album = repository.findById(id).orElseThrow();
+    var album = get(id);
     album.setTitle(title);
+    album.setUpdatedAt(Instant.now());
+    return repository.save(album);
+  }
+
+  public Album updateCover(UUID id, String coverObjectKey) {
+    var album = get(id);
+    album.setCoverObjectKey(coverObjectKey);
     album.setUpdatedAt(Instant.now());
     return repository.save(album);
   }

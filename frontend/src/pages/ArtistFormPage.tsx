@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createArtist, fetchArtist, updateArtist } from "../services/artistService";
 import { albumFacade } from "../facades/albumFacade";
 import { useObservable } from "../hooks/useObservable";
+import { uploadCover } from "../services/albumService";
 
 type Props = {
   mode: "create" | "edit";
@@ -15,6 +16,8 @@ export default function ArtistFormPage({ mode }: Props) {
   const [albumTitle, setAlbumTitle] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedAlbumId, setSelectedAlbumId] = useState<string>("");
+  const [uploading, setUploading] = useState(false);
   const albumsState = useObservable(albumFacade.state$, albumFacade.getState());
 
   useEffect(() => {
@@ -25,6 +28,12 @@ export default function ArtistFormPage({ mode }: Props) {
       albumFacade.loadByArtist(id);
     }
   }, [mode, id]);
+
+  useEffect(() => {
+    if (!selectedAlbumId && albumsState.items.length > 0) {
+      setSelectedAlbumId(albumsState.items[0].id);
+    }
+  }, [albumsState.items, selectedAlbumId]);
 
   const onSaveArtist = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -62,6 +71,25 @@ export default function ArtistFormPage({ mode }: Props) {
       setAlbumTitle("");
     } catch {
       setError("Falha ao adicionar álbum.");
+    }
+  };
+
+  const onUploadCover = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !selectedAlbumId) {
+      return;
+    }
+    setUploading(true);
+    setError(null);
+    try {
+      await uploadCover(selectedAlbumId, file);
+      if (id) {
+        await albumFacade.loadByArtist(id);
+      }
+    } catch {
+      setError("Falha ao enviar capa.");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -114,8 +142,28 @@ export default function ArtistFormPage({ mode }: Props) {
 
               <div>
                 <label className="text-sm font-medium">Upload de capa</label>
-                <input className="mt-2 w-full rounded border border-slate-200 px-3 py-2" type="file" disabled />
-                <p className="mt-1 text-xs text-slate-400">Será ativado no item de MinIO.</p>
+                <div className="mt-2 flex flex-col gap-2">
+                  <select
+                    className="w-full rounded border border-slate-200 px-3 py-2"
+                    value={selectedAlbumId}
+                    onChange={(event) => setSelectedAlbumId(event.target.value)}
+                  >
+                    {albumsState.items.map((album) => (
+                      <option key={album.id} value={album.id}>
+                        {album.title}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    className="w-full rounded border border-slate-200 px-3 py-2"
+                    type="file"
+                    onChange={onUploadCover}
+                    disabled={uploading}
+                  />
+                </div>
+                <p className="mt-1 text-xs text-slate-400">
+                  {uploading ? "Enviando capa..." : "Selecione um álbum e envie a capa"}
+                </p>
               </div>
             </>
           )}
@@ -143,7 +191,7 @@ export default function ArtistFormPage({ mode }: Props) {
           <div className="mt-3 space-y-2">
             {albumsState.items.map((album) => (
               <div key={album.id} className="rounded border border-slate-100 px-3 py-2 text-sm">
-                {album.title}
+                {album.title} {album.coverObjectKey ? "(capa ok)" : ""}
               </div>
             ))}
           </div>

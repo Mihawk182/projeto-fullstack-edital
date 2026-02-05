@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { useObservable } from "../hooks/useObservable";
 import { albumFacade } from "../facades/albumFacade";
 import { fetchArtist, ArtistDto } from "../services/artistService";
+import { getCover } from "../services/albumService";
 
 export default function ArtistDetailPage() {
   const { id } = useParams();
   const [artist, setArtist] = useState<ArtistDto | null>(null);
   const [artistError, setArtistError] = useState<string | null>(null);
+  const [coverUrls, setCoverUrls] = useState<Record<string, string>>({});
   const { items, loading, error } = useObservable(albumFacade.state$, albumFacade.getState());
 
   useEffect(() => {
@@ -17,6 +19,27 @@ export default function ArtistDetailPage() {
       .catch(() => setArtistError("Artista não encontrado."));
     albumFacade.loadByArtist(id);
   }, [id]);
+
+  useEffect(() => {
+    const fetchCovers = async () => {
+      const entries = await Promise.all(
+        items.map(async (album) => {
+          if (!album.coverObjectKey) return [album.id, ""] as const;
+          try {
+            const res = await getCover(album.id);
+            return [album.id, res.coverUrl] as const;
+          } catch {
+            return [album.id, ""] as const;
+          }
+        })
+      );
+      setCoverUrls(Object.fromEntries(entries));
+    };
+
+    if (items.length > 0) {
+      fetchCovers();
+    }
+  }, [items]);
 
   return (
     <section className="space-y-6">
@@ -44,9 +67,11 @@ export default function ArtistDetailPage() {
         {items.map((album) => (
           <div key={album.id} className="rounded-2xl bg-white p-5 shadow-soft">
             <div className="text-lg font-semibold">{album.title}</div>
-            <div className="mt-2 text-sm text-slate-500">
-              Capa: {album.coverObjectKey ?? "pendente"}
-            </div>
+            {coverUrls[album.id] ? (
+              <img className="mt-3 h-40 w-full rounded-lg object-cover" src={coverUrls[album.id]} alt={album.title} />
+            ) : (
+              <div className="mt-2 text-sm text-slate-500">Capa: pendente</div>
+            )}
           </div>
         ))}
       </div>
