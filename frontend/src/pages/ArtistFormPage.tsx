@@ -42,6 +42,7 @@ export default function ArtistFormPage({ mode }: Props) {
         navigate(`/artists/${created.id}/edit`);
       } else if (id) {
         await updateArtist(id, name);
+        navigate("/artists");
       }
     } catch {
       setError("Falha ao salvar artista.");

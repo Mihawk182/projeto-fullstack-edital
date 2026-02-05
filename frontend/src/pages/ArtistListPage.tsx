@@ -8,9 +8,7 @@ export default function ArtistListPage() {
   const { items, filters, totalPages, loading, error } = state;
 
   useEffect(() => {
-    if (items.length === 0) {
-      artistFacade.load();
-    }
+    artistFacade.load();
   }, []);
 
   return (
