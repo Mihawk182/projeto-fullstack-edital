@@ -3,6 +3,7 @@ package com.edital.fullstack.domain.service;
 import com.edital.fullstack.domain.entity.Album;
 import com.edital.fullstack.domain.repository.AlbumRepository;
 import com.edital.fullstack.domain.repository.ArtistRepository;
+import com.edital.fullstack.websocket.AlbumEventPublisher;
 import java.time.Instant;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -13,10 +14,16 @@ import org.springframework.stereotype.Service;
 public class AlbumService {
   private final AlbumRepository repository;
   private final ArtistRepository artistRepository;
+  private final AlbumEventPublisher eventPublisher;
 
-  public AlbumService(AlbumRepository repository, ArtistRepository artistRepository) {
+  public AlbumService(
+      AlbumRepository repository,
+      ArtistRepository artistRepository,
+      AlbumEventPublisher eventPublisher
+  ) {
     this.repository = repository;
     this.artistRepository = artistRepository;
+    this.eventPublisher = eventPublisher;
   }
 
   public Page<Album> list(UUID artistId, Pageable pageable) {
@@ -34,7 +41,9 @@ public class AlbumService {
     var artist = artistRepository.findById(artistId).orElseThrow();
     var now = Instant.now();
     var album = new Album(UUID.randomUUID(), artist, title, null, now, now);
-    return repository.save(album);
+    var saved = repository.save(album);
+    eventPublisher.publishCreated(saved);
+    return saved;
   }
 
   public Album update(UUID id, String title) {
