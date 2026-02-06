@@ -1,0 +1,6 @@
+ALTER TABLE regional DROP CONSTRAINT IF EXISTS regional_pkey;
+
+ALTER TABLE regional
+  ADD COLUMN IF NOT EXISTS pk BIGSERIAL PRIMARY KEY;
+
+CREATE INDEX IF NOT EXISTS idx_regional_id ON regional(id);

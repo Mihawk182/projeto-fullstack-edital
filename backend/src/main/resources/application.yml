@@ -35,3 +35,6 @@ minio:
   access-key: ${MINIO_ACCESS_KEY:minio}
   secret-key: ${MINIO_SECRET_KEY:minio123}
   bucket: ${MINIO_BUCKET:album-covers}
+
+regional:
+  sync-url: ${REGIONAL_SYNC_URL:https://integrador-argus-api.geia.vip/v1/regionais}
